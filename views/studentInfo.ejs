@@ -22,16 +22,6 @@
             <input type="hidden" name="rollNo" value="<%= studentDocument.rollNo %>"></input>
         </div>
     </form>
-    <form action="/editStudent" method="post">
-        <div class="editStuBtn">
-            <button type="submit" name="editStuBtn" value="<%= studentDocument.name %>" class="btn btn-info">Edit Record</button>
-            <input type="hidden" name="districtName" value="<%= studentDocument.district %>"></input>
-            <input type="hidden" name="schoolName" value="<%= studentDocument.schoolName %>"></input>
-            <input type="hidden" name="className" value="<%= studentDocument.className %>"></input>
-            <input type="hidden" name="rollNo" value="<%= studentDocument.rollNo %>"></input>
-        </div>
-    </form>
-    
     
     <h1><%= studentDocument.name %></h1>
     <div class="row student-info-row">

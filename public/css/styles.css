@@ -154,4 +154,31 @@ h1 {
   margin-top: 20px;
 }
 
+#login-form{
+  margin: auto; 
+  border: solid 1px grey;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  border-radius: 2mm;
+  font-weight: 700;
+  
+}
+
+.login-title {
+  font-size: 3.5rem;
+  line-height: 1.5;
+  text-align: center;
+  padding: 30px;
+  color: #515250;
+}
+
+.login-subtitle {
+  /* text-align: center; */
+  padding: 20px;
+  color: #515250;
+}
+
+.login-page {
+  background: white;
+}
 

@@ -379,7 +379,7 @@ app.listen(3000, function() {
 });
 
 app.get("/", function(req, res) {
-  res.render("index");
+  res.render("login");
 });
 
 app.post("/districtPage", function(req, res) {
@@ -389,6 +389,7 @@ app.post("/districtPage", function(req, res) {
     foundItems.forEach(function(student) {
       listOfSchools.push(student.schoolName);
     });
+    listOfSchools.sort();
     const setOfSchools = new Set(listOfSchools);
     res.render("district", {
       districtName: clickedBtnValue,
@@ -658,7 +659,7 @@ app.post("/markEntry", function(req, res) {
 });
 
 app.post("/getMarks", function(req, res) {
-  var listOfStudents = []
+  var listOfStudents = [];
   console.log(req.body);
   const name = req.body.name;
   const district = req.body.districtName;
@@ -773,3 +774,147 @@ app.post("/getMarks", function(req, res) {
   );
 });
 
+app.post("/loginProcess", function(req, res) {
+  const username = req.body.username;
+  const password = req.body.password;
+  console.log(username + " " + password);
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("studentDB");
+    var query = {
+      "state.username": username
+    };
+    dbo.collection("login").findOne(query, function(err, result) {
+      // console.log(result);
+
+      if (result !== null) {
+        var passwordInDB = result.state.password;
+        if (password === passwordInDB) {
+          res.render("index");
+        }
+      } else if (result !== null && password !== passwordInDB) {
+      }
+
+      if (result === null) {
+        dbo
+          .collection("login")
+          .findOne({ "district.north.username": username }, function(
+            err,
+            result
+          ) {
+            if (result !== null) {
+              var passwordInDB = result.district.north.password;
+              if (password === passwordInDB) {
+                console.log(result);
+                var listOfSchools = [];
+                Student.find({ district: "North" }, function(err, foundItems) {
+                  foundItems.forEach(function(student) {
+                    listOfSchools.push(student.schoolName);
+                  });
+                  listOfSchools.sort();
+                  const setOfSchools = new Set(listOfSchools);
+                  res.render("district", {
+                    districtName: "North",
+                    schoolsList: setOfSchools
+                  });
+                });
+              }
+            }
+            else if (result !== null && password !== passwordInDB){
+
+            }
+            if (result === null) {
+              dbo
+                .collection("login")
+                .findOne({ "district.south.username": username }, function(
+                  err,
+                  result
+                ) {
+                  if (result !== null) {
+                    var passwordInDB = result.district.south.password;
+                    if (password === passwordInDB) {
+                      console.log(result);
+                      var listOfSchools = [];
+                      Student.find({ district: "South" }, function(err, foundItems) {
+                        foundItems.forEach(function(student) {
+                          listOfSchools.push(student.schoolName);
+                        });
+                        listOfSchools.sort();
+                        const setOfSchools = new Set(listOfSchools);
+                        res.render("district", {
+                          districtName: "South",
+                          schoolsList: setOfSchools
+                        });
+                      });
+                    }
+                  }
+                  else if (result !== null && password !== passwordInDB){
+
+                  }
+                  if (result === null) {
+                    dbo
+                      .collection("login")
+                      .findOne({ "district.east.username": username }, function(
+                        err,
+                        result
+                      ) {
+                        if (result !== null) {
+                          var passwordInDB = result.district.east.password;
+                          if (password === passwordInDB) {
+                            console.log(result);
+                            var listOfSchools = [];
+                            Student.find({ district: "East" }, function(err, foundItems) {
+                              foundItems.forEach(function(student) {
+                                listOfSchools.push(student.schoolName);
+                              });
+                              listOfSchools.sort();
+                              const setOfSchools = new Set(listOfSchools);
+                              res.render("district", {
+                                districtName: "East",
+                                schoolsList: setOfSchools
+                              });
+                            });
+                          }
+                        }
+                        else if (result !== null && password !== passwordInDB){
+      
+                        }
+                        if (result === null) {
+                          dbo
+                            .collection("login")
+                            .findOne(
+                              { "district.west.username": username },
+                              function(err, result) {
+                                if (result !== null) {
+                                  var passwordInDB = result.district.west.password;
+                                  if (password === passwordInDB) {
+                                    console.log(result);
+                                    var listOfSchools = [];
+                                    Student.find({ district: "West" }, function(err, foundItems) {
+                                      foundItems.forEach(function(student) {
+                                        listOfSchools.push(student.schoolName);
+                                      });
+                                      listOfSchools.sort();
+                                      const setOfSchools = new Set(listOfSchools);
+                                      res.render("district", {
+                                        districtName: "West",
+                                        schoolsList: setOfSchools
+                                      });
+                                    });
+                                  }
+                                }
+                                else if (result !== null && password !== passwordInDB){
+              
+                                }
+                              }
+                            );
+                        }
+                      });
+                  }
+                });
+            }
+          });
+      }
+    });
+  });
+});

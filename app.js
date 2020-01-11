@@ -37,6 +37,34 @@ require('dns').resolve('www.google.com', function(err) {
 // checkInternetConnected(config)
 //   .then(() => {
 //     var urlMongoose = "mongodb+srv://admin-abishek:test123@cluster0-ezbw2.mongodb.net/test?retryWrites=true&w=majority/studentDB";
+// exec(
+//   "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection teachers --type JSON --file E:outputTeachers.json",
+//   (err, stdout, stderr) => {
+//     if (err) {
+//       //some err occurred
+//       console.error(err);
+//     } else {
+//       // the *entire* stdout and stderr (buffered)
+//       console.log(`stdout: ${stdout}`);
+//       console.log(`stderr: ${stderr}`);
+//     }
+//   }
+// );
+// exec(
+//   "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection students --type JSON --file E:output.json",
+//   (err, stdout, stderr) => {
+//     if (err) {
+//       //some err occurred
+//       console.error(err);
+//     } else {
+//       // the *entire* stdout and stderr (buffered)
+//       console.log(`stdout: ${stdout}`);
+//       console.log(`stderr: ${stderr}`);
+//     }
+//   }
+// );
+
+
 //     console.log("Internet available"); 
 //     mongoose.connect(
 //       urlMongoose,
@@ -46,6 +74,33 @@ require('dns').resolve('www.google.com', function(err) {
              
 //   }).catch((error) => {
     var urlMongoose = "mongodb://localhost:27017/studentDB";
+    // exec(
+//   'mongoexport --db studentDB --collection students --out "E:output.json" --pretty',
+//   (err, stdout, stderr) => {
+//     if (err) {
+//       //some err occurred
+//       console.error(err);
+//     } else {
+//       // the *entire* stdout and stderr (buffered)
+//       console.log(`stdout: ${stdout}`);
+//       console.log(`stderr: ${stderr}`);
+//     }
+//   }
+// );
+// exec(
+//     'mongoexport --db studentDB --collection teachers --out "E:/outputTeachers.json" --pretty',
+//     (err, stdout, stderr) => {
+//       if (err) {
+//         //some err occurred
+//         console.error(err);
+//       } else {
+//         // the *entire* stdout and stderr (buffered)
+//         console.log(`stdout: ${stdout}`);
+//         console.log(`stderr: ${stderr}`);
+//       }
+//     }
+//   );
+
     // console.log("No internet");
     mongoose.connect(
       urlMongoose,

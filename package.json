@@ -11,6 +11,8 @@
   "dependencies": {
     "alert-node": "^2.1.1",
     "body-parser": "^1.19.0",
+    "check-internet-connected": "^2.0.4",
+    "dns": "^0.2.2",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "jquery": "^3.4.1",

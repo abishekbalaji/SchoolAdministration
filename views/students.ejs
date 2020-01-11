@@ -5,6 +5,14 @@
 </head>
 <body>
     <%- include("navbar") -%>
+    <div class="handling-teacher-btn-div">
+        <form action="/teacherInfo" method="POST">
+            <button type="submit" class="btn btn-info">Handling Teacher</button>
+            <input type="hidden" name="districtName" value="<%= districtName %>"></input>
+            <input type="hidden" name="schoolName" value="<%= schoolName %>"></input>
+            <input type="hidden" name="className" value="<%= className %>"></input>
+        </form>
+    </div>
     <div class="add-student-btn-div">
         <form action="/addStudent" method="POST">
             <button type="submit" class="btn btn-primary">Add Student</button>

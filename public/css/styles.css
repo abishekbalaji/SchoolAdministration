@@ -131,6 +131,8 @@ h1 {
 
 .add-student-form {
   margin-top: 30px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .flex-container {

@@ -1,11 +1,13 @@
 const express = require("express");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://127.0.0.1:27017/";
 // var dns = require('dns');
-const checkInternetConnected = require('check-internet-connected');
+const checkInternetConnected = require("check-internet-connected");
+const dateandTime = require("./dateandTime");
 
 const alert = require("alert-node");
 const { exec } = require("child_process");
@@ -20,102 +22,138 @@ app.use(express.static("public"));
 // Mongoose----------------------------------------
 
 // example usage:
-
+// Network Connectivity and mongoDB url---------------------------------
 const config = {
   timeout: 5000, //timeout connecting to each server(A and AAAA), each try (default 5000)
-  retries: 5,//number of retries to do before failing (default 5)
-  domain: 'google.com'//the domain to check DNS record of
-}
-require('dns').resolve('www.google.com', function(err) {
-  if (err) {
-     console.log("No connection");
-  } else {
-     console.log("Connected");
-  }
-});
-
-// checkInternetConnected(config)
-//   .then(() => {
-//     var urlMongoose = "mongodb+srv://admin-abishek:test123@cluster0-ezbw2.mongodb.net/test?retryWrites=true&w=majority/studentDB";
-// exec(
-//   "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection teachers --type JSON --file E:outputTeachers.json",
-//   (err, stdout, stderr) => {
-//     if (err) {
-//       //some err occurred
-//       console.error(err);
-//     } else {
-//       // the *entire* stdout and stderr (buffered)
-//       console.log(`stdout: ${stdout}`);
-//       console.log(`stderr: ${stderr}`);
-//     }
+  retries: 5, //number of retries to do before failing (default 5)
+  domain: "google.com" //the domain to check DNS record of
+};
+// require('dns').resolve('www.google.com', function(err) {
+//   if (err) {
+//      console.log("No connection");
+//   } else {
+//      console.log("Connected");
 //   }
-// );
-// exec(
-//   "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection students --type JSON --file E:output.json",
-//   (err, stdout, stderr) => {
-//     if (err) {
-//       //some err occurred
-//       console.error(err);
-//     } else {
-//       // the *entire* stdout and stderr (buffered)
-//       console.log(`stdout: ${stdout}`);
-//       console.log(`stderr: ${stderr}`);
-//     }
-//   }
-// );
+// });
 
+checkInternetConnected(config)
+  .then(() => {
+    var urlMongoose =
+      "mongodb+srv://admin-abishek:test123@cluster0-ezbw2.mongodb.net/test?retryWrites=true&w=majority/studentDB";
+    exec(
+      "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection teachers --type JSON --file E:\outputTeachers.json",
+      (err, stdout, stderr) => {
+        if (err) {
+          //some err occurred
+          console.error(err);
+        } else {
+          // the *entire* stdout and stderr (buffered)
+          console.log(`stdout: ${stdout}`);
+          console.log(`stderr: ${stderr}`);
+        }
+      }
+    );
+    exec(
+      "mongoexport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection teachers --type JSON --file E:\outputTeachers.json",
+      (err, stdout, stderr) => {
+        if (err) {
+          //some err occurred
+          console.error(err);
+        } else {
+          // the *entire* stdout and stderr (buffered)
+          console.log(`stdout: ${stdout}`);
+          console.log(`stderr: ${stderr}`);
+        }
+      }
+    );
+    //   "mongoimport --host Cluster0-shard-0/cluster0-shard-00-00-ezbw2.mongodb.net:27017,cluster0-shard-00-01-ezbw2.mongodb.net:27017,cluster0-shard-00-02-ezbw2.mongodb.net:27017 --ssl --username admin-abishek --password test123 --authenticationDatabase admin --db studentDB --collection students --type JSON --file E:\output.json",
+    //   (err, stdout, stderr) => {
+    //     if (err) {
+    //       //some err occurred
+    //       console.error(err);
+    //     } else {
+    //       // the *entire* stdout and stderr (buffered)
+    //       console.log(`stdout: ${stdout}`);
+    //       console.log(`stderr: ${stderr}`);
+    //     }
+    //   }
+    // );
 
-//     console.log("Internet available"); 
-//     mongoose.connect(
-//       urlMongoose,
-//       { useNewUrlParser: true },
-//       { useUnifiedTopology: true }
-//     );
-             
-//   }).catch((error) => {
-    var urlMongoose = "mongodb://localhost:27017/studentDB";
-    // exec(
-//   'mongoexport --db studentDB --collection students --out "E:output.json" --pretty',
-//   (err, stdout, stderr) => {
-//     if (err) {
-//       //some err occurred
-//       console.error(err);
-//     } else {
-//       // the *entire* stdout and stderr (buffered)
-//       console.log(`stdout: ${stdout}`);
-//       console.log(`stderr: ${stderr}`);
-//     }
-//   }
-// );
-// exec(
-//     'mongoexport --db studentDB --collection teachers --out "E:/outputTeachers.json" --pretty',
-//     (err, stdout, stderr) => {
-//       if (err) {
-//         //some err occurred
-//         console.error(err);
-//       } else {
-//         // the *entire* stdout and stderr (buffered)
-//         console.log(`stdout: ${stdout}`);
-//         console.log(`stderr: ${stderr}`);
-//       }
-//     }
-//   );
-
-    // console.log("No internet");
+    console.log("Internet available");
     mongoose.connect(
       urlMongoose,
       { useNewUrlParser: true },
       { useUnifiedTopology: true }
     );
-    
-  // });
-  
+  })
+  .catch(error => {
+var urlMongoose = "mongodb://localhost:27017/studentDB";
+exec(
+  'mongoexport --db studentDB --collection students --out "E:\output.json" --pretty',
+  (err, stdout, stderr) => {
+    if (err) {
+      //some err occurred
+      console.error(err);
+    } else {
+      // the *entire* stdout and stderr (buffered)
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
+  }
+);
+exec(
+  'mongoimport --db studentDB --collection students --out "E:\output.json" --pretty',
+  (err, stdout, stderr) => {
+    if (err) {
+      //some err occurred
+      console.error(err);
+    } else {
+      // the *entire* stdout and stderr (buffered)
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
+  }
+);
+exec(
+  'mongoexport --db studentDB --collection teachers --out "E:/outputTeachers.json" --pretty',
+  (err, stdout, stderr) => {
+    if (err) {
+      //some err occurred
+      console.error(err);
+    } else {
+      // the *entire* stdout and stderr (buffered)
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
+  }
+);
+exec(
+  'mongoimport --db studentDB --collection teachers --out "E:/outputTeachers.json" --pretty',
+  (err, stdout, stderr) => {
+    if (err) {
+      //some err occurred
+      console.error(err);
+    } else {
+      // the *entire* stdout and stderr (buffered)
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
+  }
+);
+
+console.log("No internet");
+mongoose.connect(
+  urlMongoose,
+  { useNewUrlParser: true },
+  { useUnifiedTopology: true }
+);
+});
 
 mongoose.set("useFindAndModify", false);
 const district = new mongoose.Schema({
   name: String
 });
-
+// Student Schema---------------------------------------------
 const studentSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -335,6 +373,7 @@ Student.find({}, function(err, foundItems) {
 // });
 // student5.save();
 
+// Class Schema-----------------------------------------------------
 const classSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -359,6 +398,7 @@ const classSchema = new mongoose.Schema({
 // //   });
 // //   class1.save();
 // // })
+// School schema--------------------------------------------------------------------
 
 const schoolSchema = new mongoose.Schema({
   name: {
@@ -385,6 +425,7 @@ const School = mongoose.model("schools", schoolSchema);
 //   school1.save();
 // });
 
+// District Schema---------------------------------------------------------------------
 const districtSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -463,6 +504,7 @@ const districtSchema = new mongoose.Schema({
 //   const north = new District()
 // })
 
+// Teacher Schema-------------------------------------------
 const teacherSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -500,6 +542,7 @@ const teacherSchema = new mongoose.Schema({
 
 const Teacher = mongoose.model("teachers", teacherSchema);
 
+// Add teachers into DB------------------------------------------------------------
 const teacher1 = new Teacher({
   name: "Teacher1",
   handlingClass: "I",
@@ -591,15 +634,30 @@ const teacher7 = new Teacher({
 // });
 
 // Mongoose end-----------------------------------------------------------
-
+// Start node.js server
 app.listen(3000, function() {
   console.log("Server started");
 });
 
+// Render login page----------------------------------------------------------
 app.get("/", function(req, res) {
+  // exec(
+  //   "",
+  //   (err, stdout, stderr) => {
+  //     if (err) {
+  //       //some err occurred
+  //       console.error(err);
+  //     } else {
+  //       // the *entire* stdout and stderr (buffered)
+  //       console.log(`stdout: ${stdout}`);
+  //       console.log(`stderr: ${stderr}`);
+  //     }
+  //   }
+  // );
   res.render("login");
 });
 
+// Render District Page------------------------------------------
 app.post("/districtPage", function(req, res) {
   var listOfSchools = [];
   const clickedBtnValue = req.body.districtBtn;
@@ -616,6 +674,7 @@ app.post("/districtPage", function(req, res) {
   });
 });
 
+// Render school page------------------------------------------------
 app.post("/schoolPage", function(req, res) {
   var listOfClasses = [];
   const school = req.body.schoolBtn;
@@ -639,6 +698,7 @@ app.post("/schoolPage", function(req, res) {
   });
 });
 
+//Render student page----------------------------------------------
 app.post("/classPage", function(req, res) {
   var listOfStudents = [];
   const districtName = req.body.districtName;
@@ -661,7 +721,7 @@ app.post("/classPage", function(req, res) {
     }
   );
 });
-
+// Render student Info page------------------------------------------------------------
 app.post("/studentInfoPage", function(req, res) {
   const districtName = req.body.districtName;
   const schoolName = req.body.schoolName;
@@ -680,6 +740,7 @@ app.post("/studentInfoPage", function(req, res) {
   );
 });
 
+//Render Add Student page--------------------------------
 app.post("/addStudent", function(req, res) {
   const className = req.body.className;
   const schoolName = req.body.schoolName;
@@ -691,6 +752,7 @@ app.post("/addStudent", function(req, res) {
   });
 });
 
+//Add student data into Database
 app.post("/addStudentIntoDB", function(req, res) {
   const name = req.body.name;
   const rollNo = req.body.rollNo;
@@ -732,9 +794,38 @@ app.post("/addStudentIntoDB", function(req, res) {
     }
   });
   studentDoc.save();
-  alert.alert("Student added!");
+  time = dateandTime.result();
+
+  const message =
+    "One student added to Class " +
+    studentClass +
+    " in " +
+    school +
+    "-" +
+    district +
+    " district!\n";
+  fs.appendFileSync("logData.log", time + message, "utf8");
+  var listOfStudents = [];
+
+  Student.find(
+    { district: district, schoolName: school, className: studentClass },
+    function(err, foundItems) {
+      foundItems.forEach(function(student) {
+        listOfStudents.push({ name: student.name, rollNo: student.rollNo });
+      });
+      listOfStudents.sort(compare);
+      const setOfStudents = new Set(listOfStudents);
+      res.render("students", {
+        className: studentClass,
+        listOfStudents: setOfStudents,
+        districtName: district,
+        schoolName: school
+      });
+    }
+  );
 });
 
+//Function to sort String array-------------------
 function compare(a, b) {
   // Use toUpperCase() to ignore character casing
   const nameA = a.name.toUpperCase();
@@ -749,6 +840,7 @@ function compare(a, b) {
   return comparison;
 }
 
+//Delete a student record-------------------------
 app.post("/deleteStudent", function(req, res) {
   const name = req.body.deleteStuBtn;
   const className = req.body.className;
@@ -780,6 +872,17 @@ app.post("/deleteStudent", function(req, res) {
         console.log(name);
       } else {
         console.log(name);
+        time = dateandTime.result();
+
+        const message =
+          "One student deleted from Class " +
+          className +
+          " in " +
+          schoolName +
+          "-" +
+          districtName +
+          " district!\n";
+        fs.appendFileSync("logData.log", time + message, "utf8");
       }
     }
   );
@@ -802,6 +905,7 @@ app.post("/deleteStudent", function(req, res) {
   );
 });
 
+// Edit a student record------------------
 app.post("/editStudent", function(req, res) {
   const name = req.body.editStuBtn;
   const rollNo = req.body.rollNo;
@@ -820,6 +924,7 @@ app.post("/editStudent", function(req, res) {
   });
 });
 
+// Update student record------------------------------
 app.post("/updateStudentDB", function(req, res) {
   const newName = req.body.name;
   const newRollNo = req.body.rollNo;
@@ -860,8 +965,12 @@ app.post("/updateStudentDB", function(req, res) {
       res.render("studentInfo", { studentDocument: foundItem });
     }
   );
-});
+  time = dateandTime.result();
 
+  const message = "One student updated in Class " + newClass +" in " + school + "-" + district + " district!\n";
+  fs.appendFileSync("logData.log", time + message, "utf8");
+});
+// Enter marks and attendance percentage----------------------------------
 app.post("/markEntry", function(req, res) {
   const name = req.body.name;
   const districtName = req.body.districtName;
@@ -875,7 +984,7 @@ app.post("/markEntry", function(req, res) {
     }
   );
 });
-
+// Render student Marks--------------------------------
 app.post("/getMarks", function(req, res) {
   var listOfStudents = [];
   console.log(req.body);
@@ -974,6 +1083,9 @@ app.post("/getMarks", function(req, res) {
       });
     // db.close();
   });
+  time = dateandTime.result();
+  const message = name.length + " student's mark and attendance details of Class " + className +" in " + school + "-" + districtName + " district were added!\n";
+  fs.appendFileSync("logData.log", time + message, "utf8");
   Student.find(
     { district: districtName, schoolName: schoolName, className: className },
     function(err, foundItems) {
@@ -992,6 +1104,7 @@ app.post("/getMarks", function(req, res) {
   );
 });
 
+// Login process------------------------------------------
 app.post("/loginProcess", function(req, res) {
   const username = req.body.username;
   const password = req.body.password;
@@ -1008,9 +1121,15 @@ app.post("/loginProcess", function(req, res) {
       if (result !== null) {
         var passwordInDB = result.state.password;
         if (password === passwordInDB) {
+          time = dateandTime.result();
+
+          var message = "Logged in to state account!\n";
+          fs.appendFileSync("logData.log", time + message, "utf8");
           res.render("index");
+        } else if (password !== passwordInDB) {
+          console.log("Wrong password!");
+          alert("Check your password!");
         }
-      } else if (result !== null && password !== passwordInDB) {
       }
 
       if (result === null) {
@@ -1023,6 +1142,10 @@ app.post("/loginProcess", function(req, res) {
             if (result !== null) {
               var passwordInDB = result.district.north.password;
               if (password === passwordInDB) {
+                time = dateandTime.result();
+
+                const message = "Logged in to north district account!\n";
+                fs.appendFileSync("logData.log", time + message, "utf8");
                 console.log(result);
                 var listOfSchools = [];
                 Student.find({ district: "North" }, function(err, foundItems) {
@@ -1036,8 +1159,9 @@ app.post("/loginProcess", function(req, res) {
                     schoolsList: setOfSchools
                   });
                 });
+              } else if (password !== passwordInDB) {
+                alert("Check your password!");
               }
-            } else if (result !== null && password !== passwordInDB) {
             }
             if (result === null) {
               dbo
@@ -1049,6 +1173,10 @@ app.post("/loginProcess", function(req, res) {
                   if (result !== null) {
                     var passwordInDB = result.district.south.password;
                     if (password === passwordInDB) {
+                      time = dateandTime.result();
+
+                      const message = "Logged in to south district account!\n";
+                      fs.appendFileSync("logData.log", time + message, "utf8");
                       console.log(result);
                       var listOfSchools = [];
                       Student.find({ district: "South" }, function(
@@ -1065,8 +1193,9 @@ app.post("/loginProcess", function(req, res) {
                           schoolsList: setOfSchools
                         });
                       });
+                    } else if (result !== null && password !== passwordInDB) {
+                      alert("Check your password!");
                     }
-                  } else if (result !== null && password !== passwordInDB) {
                   }
                   if (result === null) {
                     dbo
@@ -1078,6 +1207,15 @@ app.post("/loginProcess", function(req, res) {
                         if (result !== null) {
                           var passwordInDB = result.district.east.password;
                           if (password === passwordInDB) {
+                            time = dateandTime.result();
+
+                            const message =
+                              "Logged in to East district account!\n";
+                            fs.appendFileSync(
+                              "logData.log",
+                              time + message,
+                              "utf8"
+                            );
                             console.log(result);
                             var listOfSchools = [];
                             Student.find({ district: "East" }, function(
@@ -1094,11 +1232,12 @@ app.post("/loginProcess", function(req, res) {
                                 schoolsList: setOfSchools
                               });
                             });
+                          } else if (
+                            result !== null &&
+                            password !== passwordInDB
+                          ) {
+                            alert("Check your password!");
                           }
-                        } else if (
-                          result !== null &&
-                          password !== passwordInDB
-                        ) {
                         }
                         if (result === null) {
                           dbo
@@ -1110,6 +1249,15 @@ app.post("/loginProcess", function(req, res) {
                                   var passwordInDB =
                                     result.district.west.password;
                                   if (password === passwordInDB) {
+                                    time = dateandTime.result();
+
+                                    const message =
+                                      "Logged in to west district account!\n";
+                                    fs.appendFileSync(
+                                      "logData.log",
+                                      time + message,
+                                      "utf8"
+                                    );
                                     console.log(result);
                                     var listOfSchools = [];
                                     Student.find({ district: "West" }, function(
@@ -1128,11 +1276,12 @@ app.post("/loginProcess", function(req, res) {
                                         schoolsList: setOfSchools
                                       });
                                     });
+                                  } else if (
+                                    result !== null &&
+                                    password !== passwordInDB
+                                  ) {
+                                    alert("Check your password!");
                                   }
-                                } else if (
-                                  result !== null &&
-                                  password !== passwordInDB
-                                ) {
                                 }
                               }
                             );
@@ -1212,17 +1361,19 @@ app.post("/loginProcess", function(req, res) {
 //   }
 // );
 
+// Render Teacher info------------------------------------------------------
 app.post("/teacherInfo", function(req, res) {
   const district = req.body.districtName;
   const schoolName = req.body.schoolName;
   const className = req.body.className;
-  Teacher.findOne({
-    district: district,
-    schoolName: schoolName,
-    handlingClass: className
-  },
-  function(err, foundItem){
-    res.render("teacherInfo", {teacher: foundItem});
-  }
-  )
-})
+  Teacher.findOne(
+    {
+      district: district,
+      schoolName: schoolName,
+      handlingClass: className
+    },
+    function(err, foundItem) {
+      res.render("teacherInfo", { teacher: foundItem });
+    }
+  );
+});

@@ -3,7 +3,7 @@
 </head>
 <body>
     <%- include("navbar") -%>
-    <h1><%= name %></h1>
+    <h1><%= name.toUpperCase() %></h1>
     <form action="/getMarks" method="post">
       <table class="table table-bordered table-dark" id="table">
         <thead>
